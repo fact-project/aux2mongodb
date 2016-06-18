@@ -22,7 +22,7 @@ class AuxService:
         df = Table.read(filename).to_pandas()
 
         df.drop(self.ignored_columns, axis=1, inplace=True)
-        df.rename(colums=self.renames, inplace=True)
+        df.rename(columns=self.renames, inplace=True)
 
         for key, transform in self.transforms.items():
             df[key] = transform(df[key])
