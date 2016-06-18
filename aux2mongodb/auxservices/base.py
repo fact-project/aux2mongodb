@@ -1,5 +1,7 @@
 from astropy.table import Table
+from astropy.units import UnitsWarning
 import os
+import warnings
 
 
 class AuxService:
@@ -17,7 +19,9 @@ class AuxService:
         )
 
     def read_file(self, filename):
-        df = Table.read(filename).to_pandas()
+        with warnings.catch_warnings():
+            warnings.simplefilter('ignore', category=UnitsWarning)
+            df = Table.read(filename).to_pandas()
 
         df.drop(self.ignored_columns, axis=1, inplace=True)
         df.rename(columns=self.renames, inplace=True)
