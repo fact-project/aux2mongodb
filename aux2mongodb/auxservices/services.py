@@ -38,3 +38,30 @@ class DriveTracking(AuxService):
     }
     transforms = {'timestamp': fact_mjd_to_datetime}
     ignored_columns = ['QoS', ]
+
+
+class DrivePointing(AuxService):
+    basename = 'DRIVE_CONTROL_POINTING_POSITION'
+    renames = {
+        'Time': 'timestamp',
+        'Zd': 'zenith',
+        'Az': 'azimuth',
+    }
+    transforms = {'timestamp': fact_mjd_to_datetime}
+    ignored_columns = ['QoS', ]
+
+
+class DriveSource(AuxService):
+    basename = 'DRIVE_CONTROL_SOURCE_POSITION'
+    renames = {
+        'Time': 'timestamp',
+        'Ra_src': 'right_ascension_source',
+        'Ra_cmd': 'right_ascension_command',
+        'Dec_src': 'declination_source',
+        'Dec_cmd': 'declination_command',
+        'Offset': 'wobble_offset',
+        'Angle': 'wobble_angle',
+        'Name': 'source_name',
+    }
+    transforms = {'timestamp': fact_mjd_to_datetime}
+    ignored_columns = ['QoS', ]
