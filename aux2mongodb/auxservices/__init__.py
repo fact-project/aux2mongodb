@@ -3,3 +3,4 @@ from .services import MagicWeather
 from .services import DriveTracking
 from .services import DrivePointing
 from .services import DriveSource
+from .services import PfMini

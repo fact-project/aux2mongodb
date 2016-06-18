@@ -19,6 +19,18 @@ class MagicWeather(AuxService):
     transforms = {'timestamp': fact_mjd_to_datetime}
 
 
+class PfMini(AuxService):
+    basename = 'PFMINI_CONTROL_DATA'
+    renames = {
+        'Time': 'timestamp',
+        'Temperature': 'temperature',
+        'Humidity': 'humidity',
+    }
+
+    ignored_columns = ['QoS', ]
+    transforms = {'timestamp': fact_mjd_to_datetime}
+
+
 class DriveTracking(AuxService):
     basename = 'DRIVE_CONTROL_TRACKING_POSITION'
     renames = {
