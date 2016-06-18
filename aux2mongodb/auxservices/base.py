@@ -16,9 +16,7 @@ class AuxService:
             '{date:%Y%m%d}.' + self.basename + '.fits'
         )
 
-    def read(self, date):
-
-        filename = self.filename_template.format(date=date)
+    def read_file(self, filename):
         df = Table.read(filename).to_pandas()
 
         df.drop(self.ignored_columns, axis=1, inplace=True)
@@ -28,3 +26,8 @@ class AuxService:
             df[key] = transform(df[key])
 
         return df
+
+    def read_date(self, date):
+
+        filename = self.filename_template.format(date=date)
+        return self.read_file(filename)
