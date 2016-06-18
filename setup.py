@@ -14,7 +14,7 @@ setup(
     install_requires=[
         'astropy',
         'pandas',
-        'yaml',
+        'pyyaml',
         'pymongo',
         'docopt',
     ],
