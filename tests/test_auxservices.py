@@ -9,3 +9,16 @@ def test_reading_magic_weather():
 
     assert len(df.index) == 20
     assert 'timestamp' in df.columns
+
+
+def test_reading_drive_tracking():
+    from aux2mongodb import DriveTracking
+    from datetime import date
+
+    d = date(2016, 1, 1)
+
+    m = DriveTracking(auxdir='test_data')
+    df = m.read_date(d)
+
+    assert len(df.index) == 20
+    assert 'timestamp' in df.columns
