@@ -13,7 +13,7 @@ Options:
     --overwrite        If given, already existing entries are overwritten, else ignored
 '''
 
-from .auxservices import MagicWeather, DriveTracking
+from .auxservices import MagicWeather, DriveTracking, DrivePointing, DriveSource, PfMini
 import pymongo
 import pandas as pd
 import yaml
@@ -36,6 +36,9 @@ def normalize_service_name(string):
 supported_services = {
     'magicweather': MagicWeather,
     'drivetracking': DriveTracking,
+    'drivepointing': DrivePointing,
+    'drivesource': DriveSource,
+    'pfmini': PfMini,
 }
 
 
