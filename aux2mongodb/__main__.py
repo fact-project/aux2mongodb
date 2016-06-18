@@ -42,7 +42,7 @@ supported_services = {
 }
 
 
-if __name__ == '__main__':
+def main():
     logging.basicConfig(level=logging.INFO)
     args = docopt(__doc__)
     print(args)
@@ -85,6 +85,9 @@ if __name__ == '__main__':
                 for row in data:
                     bulk.find({'timestamp': row['timestamp']}).upsert().replace_one(row)
                 result = bulk.execute()
+                logging.info('Inserted: {}, Updated: {} for {:%Y-%m-%d}, {}'.format(
+                    len(result['upserted']), result['nModified'], date, collection.name
+                ))
             else:
                 try:
                     result = collection.insert_many(data, ordered=False)
@@ -99,3 +102,7 @@ if __name__ == '__main__':
                         date,
                         collection.name
                     ))
+
+
+if __name__ == '__main__':
+    main()

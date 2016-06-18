@@ -14,6 +14,14 @@ setup(
     install_requires=[
         'astropy',
         'pandas',
+        'yaml',
+        'pymongo',
+        'docopt',
     ],
+    entry_points={
+        'console_scripts': [
+            'fact_aux2mongodb = aux2mongodb.__main__:main'
+        ]
+    },
     zip_safe=False,
 )
