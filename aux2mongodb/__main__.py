@@ -63,7 +63,7 @@ def main():
     for service_name in services:
 
         service_name = normalize_service_name(service_name)
-        assert service_name in services, service_name + ' is not supported'
+        assert service_name in supported_services, service_name + ' is not supported'
         service = supported_services[service_name](auxdir=args['--auxdir'])
 
         collection = db[camel2snake(service.__class__.__name__)]
@@ -76,7 +76,9 @@ def main():
                 logging.info('No data available for {}, {}'.format(collection.name, date))
                 continue
             except Exception:
-                logging.exception()
+                logging.exception(
+                    'Could not read auxdata for {}, {}'.format(collection.name, date)
+                )
 
             data = df.to_dict(orient='records')
 
