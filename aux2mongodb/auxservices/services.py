@@ -74,6 +74,7 @@ class DriveSource(AuxService):
         'Offset': 'wobble_offset',
         'Angle': 'wobble_angle',
         'Name': 'source_name',
+        'Period': 'orbit_period',
     }
     transforms = {'timestamp': fact_mjd_to_datetime}
     ignored_columns = ['QoS', ]
