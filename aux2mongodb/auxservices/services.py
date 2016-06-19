@@ -38,6 +38,7 @@ class DriveTracking(AuxService):
         'Ra': 'right_ascension',
         'Dec': 'declination',
         'Ha': 'hourangle',
+        'SrcHa': 'hourangle_source',
         'SrcRa': 'right_ascension_source',
         'SrcDec': 'declination_source',
         'HaDec': 'hourangle_source',
