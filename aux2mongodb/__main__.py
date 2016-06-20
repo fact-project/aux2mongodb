@@ -5,8 +5,8 @@ Usage:
 Options:
     --services=<s>     Comma Separated list of services to store in the mongodb
                        If not given, all supported services are stored
-    --begin=<date>     First date to fill into the database [default: 2016-01-01]
-    --end=<date>       Last date to fill into the database [default: 2016-01-31]
+    --from=<date>      First date to fill into the database [default: 2016-01-01]
+    --until=<date>     Last date to fill into the database [default: 2016-01-31]
     --config=<file>    Config file with database credentials [default: aux2mongodb.yaml]
     --auxdir=<auxdir>  Aux data path (must contain the yyyy/mm/dd/ structure)
                        [default: /fact/aux]
@@ -57,7 +57,7 @@ def main():
     )
     db = client.auxdata
 
-    dates = pd.date_range(args['--begin'], args['--end'], freq='1d')
+    dates = pd.date_range(args['--from'], args['--until'], freq='1d')
     services = args['--services'].split(',') if args['--services'] else supported_services
 
     for service_name in services:
