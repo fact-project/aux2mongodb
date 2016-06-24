@@ -13,7 +13,10 @@ Options:
     --overwrite        If given, already existing entries are overwritten, else ignored
 '''
 
-from .auxservices import MagicWeather, DriveTracking, DrivePointing, DriveSource, PfMini
+from .auxservices import (
+    MagicWeather, DriveTracking, DrivePointing,
+    DriveSource, PfMini, FSCHumidity, FSCTemperature,
+)
 import pymongo
 import pandas as pd
 import yaml
@@ -39,6 +42,8 @@ supported_services = {
     'drivepointing': DrivePointing,
     'drivesource': DriveSource,
     'pfmini': PfMini,
+    'fschumidity': FSCHumidity,
+    'fsctemperature': FSCTemperature,
 }
 
 
