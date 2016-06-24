@@ -21,10 +21,23 @@ class AuxService:
     def read_file(self, filename):
         with warnings.catch_warnings():
             warnings.simplefilter('ignore', category=UnitsWarning)
-            df = Table.read(filename).to_pandas()
+            table = Table.read(filename)
 
-        df.drop(self.ignored_columns, axis=1, inplace=True)
-        df.rename(columns=self.renames, inplace=True)
+        for column in table.columns.keys():
+            if column in self.ignored_columns:
+                table.remove_column(column)
+
+            elif column in self.renames:
+                table[column].name = self.renames[column]
+
+        for column in table.columns.keys():
+            shape = table[column].shape
+            if len(shape) > 1:
+                for i in range(shape[1]):
+                    table[column + '_{}'.format(i)] = table[column][:, i]
+                table.remove_column(column)
+
+        df = table.to_pandas()
 
         for key, transform in self.transforms.items():
             df[key] = transform(df[key])
