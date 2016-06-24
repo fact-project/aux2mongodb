@@ -2,6 +2,17 @@ from .base import AuxService
 from ..utils import fact_mjd_to_datetime
 
 
+__all__ = [
+    'MagicWeather',
+    'PfMini',
+    'DriveTracking',
+    'DrivePointing',
+    'DriveSource',
+    'FSCHumidity',
+    'FSCTemperature'
+]
+
+
 class MagicWeather(AuxService):
     basename = 'MAGIC_WEATHER_DATA'
     renames = {
@@ -76,6 +87,33 @@ class DriveSource(AuxService):
         'Angle': 'wobble_angle',
         'Name': 'source_name',
         'Period': 'orbit_period',
+    }
+    transforms = {'timestamp': fact_mjd_to_datetime}
+    ignored_columns = ['QoS', ]
+
+
+class FSCHumidity(AuxService):
+    basename = 'FSC_CONTROL_HUMIDITY'
+    renames = {
+        'Time': 'timestamp',
+        't': 'fsc_uptime',
+        'H': 'humidity',
+    }
+    transforms = {'timestamp': fact_mjd_to_datetime}
+    ignored_columns = ['QoS', ]
+
+
+class FSCTemperature(AuxService):
+    basename = 'FSC_CONTROL_TEMPERATURE'
+    renames = {
+        'Time': 'timestamp',
+        't': 'fsc_uptime',
+        'T_crate': 'crate_temperature',
+        'T_sens': 'sensor_compartment_temperature',
+        'T_ps': 'power_supply_temperature',
+        'T_aux': 'auxiliary_power_supply_temperature',
+        'T_back': 'ftm_backpanel_temperature',
+        'T_eth': 'ethernet_temperature',
     }
     transforms = {'timestamp': fact_mjd_to_datetime}
     ignored_columns = ['QoS', ]
