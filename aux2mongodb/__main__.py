@@ -5,8 +5,8 @@ Usage:
 Options:
     --services=<s>     Comma Separated list of services to store in the mongodb
                        If not given, all supported services are stored
-    --from=<date>      First date to fill into the database [default: 2016-01-01]
-    --until=<date>     Last date to fill into the database [default: 2016-01-31]
+    --from=<date>      First date to fill into the database, yesterday if not given
+    --until=<date>     Last date to fill into the database, today if not given
     --config=<file>    Config file with database credentials [default: aux2mongodb.yaml]
     --auxdir=<auxdir>  Aux data path (must contain the yyyy/mm/dd/ structure)
                        [default: /fact/aux]
@@ -16,6 +16,7 @@ Options:
 from .auxservices import (
     MagicWeather, DriveTracking, DrivePointing,
     DriveSource, PfMini, FSCHumidity, FSCTemperature,
+    FTMTriggerRates
 )
 import pymongo
 import pandas as pd
@@ -24,6 +25,7 @@ from docopt import docopt
 import logging
 from urllib.parse import quote_plus
 import re
+from datetime import datetime, timedelta
 
 
 def camel2snake(string):
@@ -44,6 +46,7 @@ supported_services = {
     'pfmini': PfMini,
     'fschumidity': FSCHumidity,
     'fsctemperature': FSCTemperature,
+    'ftmtriggerrates': FTMTriggerRates,
 }
 
 
@@ -62,7 +65,11 @@ def main():
     )
     db = client.auxdata
 
-    dates = pd.date_range(args['--from'], args['--until'], freq='1d')
+    dates = pd.date_range(
+        args['--from'] or (datetime.now() - timedelta(days=1)),
+        args['--until'] or datetime.now(),
+        freq='1d',
+    )
     services = args['--services'].split(',') if args['--services'] else supported_services
 
     for service_name in services:

@@ -135,6 +135,7 @@ class FTMTriggerRates(AuxService):
     }
     transforms = {
         'timestamp': fact_mjd_to_datetime,
-        'ftm_timstamp': lambda x: x/1e6,
+        'ftm_timestamp': lambda x: x/1e6,
+        'effective_ontime': lambda x: x/1e6,
     }
     ignored_columns = ['QoS', ]
