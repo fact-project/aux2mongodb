@@ -9,7 +9,8 @@ __all__ = [
     'DrivePointing',
     'DriveSource',
     'FSCHumidity',
-    'FSCTemperature'
+    'FSCTemperature',
+    'FTMTriggerRates',
 ]
 
 
@@ -116,4 +117,24 @@ class FSCTemperature(AuxService):
         'T_eth': 'ethernet_temperature',
     }
     transforms = {'timestamp': fact_mjd_to_datetime}
+    ignored_columns = ['QoS', ]
+
+
+class FTMTriggerRates(AuxService):
+    basename = 'FTM_CONTROL_TRIGGER_RATES'
+    renames = {
+        'Time': 'timestamp',
+        'FTMtimeStamp': 'ftm_timestamp',
+        'OnTimeCounter': 'effective_ontime',
+        'TriggerCounter': 'trigger_counter',
+        'TriggerRate': 'trigger_rate',
+        'BoardRate': 'board_rate',
+        'PatchRate': 'patch_rate',
+        'OnTime': 'ontime',
+        'ElapsedTime': 'elapsed_time',
+    }
+    transforms = {
+        'timestamp': fact_mjd_to_datetime,
+        'ftm_timstamp': lambda x: x/1e6,
+    }
     ignored_columns = ['QoS', ]
