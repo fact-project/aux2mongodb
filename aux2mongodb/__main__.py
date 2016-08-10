@@ -16,7 +16,7 @@ Options:
 from .auxservices import (
     MagicWeather, DriveTracking, DrivePointing,
     DriveSource, PfMini, FSCHumidity, FSCTemperature,
-    FTMTriggerRates
+    FTMTriggerRates, BiasVoltage
 )
 import pymongo
 import pandas as pd
@@ -35,6 +35,7 @@ supported_services = {
     for cls in (
         DriveTracking, DrivePointing, DriveSource, MagicWeather,
         PfMini, FSCHumidity, FSCTemperature, FTMTriggerRates,
+        BiasVoltage,
     )
 }
 

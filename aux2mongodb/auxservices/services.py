@@ -11,6 +11,7 @@ __all__ = [
     'FSCHumidity',
     'FSCTemperature',
     'FTMTriggerRates',
+    'BiasVoltage',
 ]
 
 
@@ -137,5 +138,17 @@ class FTMTriggerRates(AuxService):
         'timestamp': fact_mjd_to_datetime,
         'ftm_timestamp': lambda x: x/1e6,
         'effective_ontime': lambda x: x/1e6,
+    }
+    ignored_columns = ['QoS', ]
+
+
+class BiasVoltage(AuxService):
+    basename = "BIAS_CONTROL_VOLTAGE"
+    renames = {
+        'Time': 'timestamp',
+        'Uout': 'bias_voltage',
+    }
+    transforms = {
+        'timestamp': fact_mjd_to_datetime,
     }
     ignored_columns = ['QoS', ]
