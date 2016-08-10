@@ -6,7 +6,7 @@ Options:
     --services=<s>     Comma Separated list of services to store in the mongodb
                        If not given, all supported services are stored
     --from=<date>      First date to fill into the database, yesterday if not given
-    --until=<date>     Last date to fill into the database, today if not given
+    --until=<date>     Last date to fill into the database, yesterday if not given
     --config=<file>    Config file with database credentials [default: aux2mongodb.yaml]
     --auxdir=<auxdir>  Aux data path (must contain the yyyy/mm/dd/ structure)
                        [default: /fact/aux]
@@ -24,30 +24,21 @@ import yaml
 from docopt import docopt
 import logging
 from urllib.parse import quote_plus
-import re
 from datetime import datetime, timedelta
 
-
-def camel2snake(string):
-    ''' taken from http://stackoverflow.com/a/1176023/3838691 '''
-    s1 = re.sub('(.)([A-Z][a-z]+)', r'\1_\2', string)
-    return re.sub('([a-z0-9])([A-Z])', r'\1_\2', s1).lower()
-
-
-def normalize_service_name(string):
-    return string.replace('_', '').lower()
+from .utils import camel2snake, normalize_service_name
+from .database import bulk_insert
 
 
 supported_services = {
-    'magicweather': MagicWeather,
-    'drivetracking': DriveTracking,
-    'drivepointing': DrivePointing,
-    'drivesource': DriveSource,
-    'pfmini': PfMini,
-    'fschumidity': FSCHumidity,
-    'fsctemperature': FSCTemperature,
-    'ftmtriggerrates': FTMTriggerRates,
+    normalize_service_name(cls.__name__): cls
+    for cls in (
+        DriveTracking, DrivePointing, DriveSource, MagicWeather,
+        PfMini, FSCHumidity, FSCTemperature, FTMTriggerRates,
+    )
 }
+
+log = logging.getLogger('aux2mongodb')
 
 
 def main():
@@ -67,7 +58,7 @@ def main():
 
     dates = pd.date_range(
         args['--from'] or (datetime.now() - timedelta(days=1)),
-        args['--until'] or datetime.now(),
+        args['--until'] or (datetime.now() - timedelta(days=1)),
         freq='1d',
     )
     services = args['--services'].split(',') if args['--services'] else supported_services
@@ -94,28 +85,18 @@ def main():
 
             data = df.to_dict(orient='records')
 
-            if args['--overwrite']:
-                bulk = collection.initialize_unordered_bulk_op()
-                for row in data:
-                    bulk.find({'timestamp': row['timestamp']}).upsert().replace_one(row)
-                result = bulk.execute()
-                logging.info('Inserted: {}, Updated: {} for {:%Y-%m-%d}, {}'.format(
-                    len(result['upserted']), result['nModified'], date, collection.name
-                ))
-            else:
-                try:
-                    result = collection.insert_many(data, ordered=False)
-                    logging.info('Inserted: {}, Failed: 0 for {:%Y-%m-%d}, {}'.format(
+            try:
+                result = bulk_insert(data, collection)
+                log.info('Inserted: {}, Failed: 0 for {:%Y-%m-%d}, {}'.format(
                         len(result.inserted_ids), date, collection.name
-                    ))
-
-                except pymongo.errors.BulkWriteError as e:
-                    logging.info('Inserted: {}, Failed: {} for {:%Y-%m-%d}, {}'.format(
-                        e.details['nInserted'],
-                        len(e.details['writeErrors']),
-                        date,
-                        collection.name
-                    ))
+                ))
+            except pymongo.errors.BulkWriteError as e:
+                log.info('Inserted: {}, Failed: {} for {:%Y-%m-%d}, {}'.format(
+                    e.details['nInserted'],
+                    len(e.details['writeErrors']),
+                    date,
+                    collection.name
+                ))
 
 
 if __name__ == '__main__':
