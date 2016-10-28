@@ -4,14 +4,19 @@ from datetime import datetime, timedelta
 from argparse import ArgumentParser
 import yaml
 import logging
+import os
 
 from . import supported_services, connect_to_database, fill_service
+
+dotdir = os.path.join(os.environ['HOME'], '.aux2mongo')
+os.makedirs(dotdir, exist_ok=True)
 
 parser = ArgumentParser()
 parser.add_argument('-c', '--config', dest='config', default='aux2mongo.yaml')
 parser.add_argument('-d', '--auxdir', dest='auxdir', default='/fact/aux')
+parser.add_argument('-d', '--auxdir', dest='auxdir', default=os.path.join(dotdir, 'logfile.txt'))
 
-log = logging.getLogger()
+log = logging.getLogger(__name__)
 
 
 def fill_last_night(services, database):
@@ -34,13 +39,20 @@ def fill_last_night(services, database):
 
 
 def main():
-
     args = parser.parse_args()
+
+    log = logging.getLogger()
+    stream = logging.StreamHandler()
+    file_handler = logging.FileHandler(args.logfile)
+    log.addHandler(stream)
+    log.addHandler(file_handler)
 
     with open(args.config) as f:
         config = yaml.safe_load(f)
 
+    log.info('Connecting to database')
     database = connect_to_database(**config['mongodb'])
+    log.info('Connection established')
 
     services = [
         service(auxdir=args.auxdir)
@@ -51,9 +63,12 @@ def main():
         fill_last_night, services=services, database=database
     )
 
-    while True:
-        schedule.run_pending()
-        sleep(60)
+    try:
+        while True:
+            schedule.run_pending()
+            sleep(60)
+    except (KeyboardInterrupt, SystemExit):
+        pass
 
 
 if __name__ == '__main__':
