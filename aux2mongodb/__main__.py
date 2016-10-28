@@ -26,8 +26,8 @@ import logging
 from urllib.parse import quote_plus
 from datetime import datetime, timedelta
 
-from .utils import camel2snake, normalize_service_name
-from .database import bulk_insert
+from .utils import normalize_service_name
+from . import fill_service
 
 
 supported_services = {
@@ -52,10 +52,11 @@ def main():
 
     for key in ('user', 'password'):
         config['mongodb'][key] = quote_plus(config['mongodb'][key])
+
     client = pymongo.MongoClient(
         'mongodb://{user}:{password}@{host}:{port}'.format(**config['mongodb'])
     )
-    db = client.auxdata
+    database = client.auxdata
 
     dates = pd.date_range(
         args['--from'] or (datetime.now() - timedelta(days=1)),
@@ -70,34 +71,17 @@ def main():
         assert service_name in supported_services, service_name + ' is not supported'
         service = supported_services[service_name](auxdir=args['--auxdir'])
 
-        collection = db[camel2snake(service.__class__.__name__)]
-        collection.create_index('timestamp', unique=True)
-
         for date in dates:
             try:
-                df = service.read_date(date)
+                fill_service(service=service, data=date, database=database)
             except FileNotFoundError:
-                logging.info('No data available for {}, {}'.format(collection.name, date))
-                continue
+                logging.info(
+                    'No data available for {}, {}'.format(service_name, date)
+                )
             except Exception:
                 logging.exception(
-                    'Could not read auxdata for {}, {}'.format(collection.name, date)
+                    'Could not read auxdata for {}, {}'.format(service_name, date)
                 )
-
-            data = df.to_dict(orient='records')
-
-            try:
-                result = bulk_insert(data, collection)
-                log.info('Inserted: {}, Failed: 0 for {:%Y-%m-%d}, {}'.format(
-                        len(result.inserted_ids), date, collection.name
-                ))
-            except pymongo.errors.BulkWriteError as e:
-                log.info('Inserted: {}, Failed: {} for {:%Y-%m-%d}, {}'.format(
-                    e.details['nInserted'],
-                    len(e.details['writeErrors']),
-                    date,
-                    collection.name
-                ))
 
 
 if __name__ == '__main__':
