@@ -17,7 +17,7 @@ log = logging.getLogger()
 def fill_last_night(database):
     date = (datetime.utcnow() - timedelta(days=1)).date()
 
-    for service in supported_services:
+    for service in supported_services.values():
         name = service.__class__.__name__
 
         log.info('Start uploading service {} for night {}'.format(name, date))
