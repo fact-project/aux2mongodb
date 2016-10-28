@@ -1,7 +1,8 @@
 import logging
 import pymongo
 
-from .utils import camel2snake, bulk_insert
+from .utils import camel2snake
+from .database import bulk_insert
 
 log = logging.getLogger(__name__)
 
