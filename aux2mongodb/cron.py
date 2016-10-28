@@ -14,7 +14,10 @@ os.makedirs(dotdir, exist_ok=True)
 parser = ArgumentParser()
 parser.add_argument('-c', '--config', dest='config', default='aux2mongo.yaml')
 parser.add_argument('-d', '--auxdir', dest='auxdir', default='/fact/aux')
-parser.add_argument('-d', '--auxdir', dest='auxdir', default=os.path.join(dotdir, 'logfile.txt'))
+parser.add_argument(
+    '-l', '--logfile', dest='logfile',
+    default=os.path.join(dotdir, 'aux2mongo.log')
+)
 
 log = logging.getLogger(__name__)
 

@@ -20,8 +20,8 @@ setup(
     ],
     entry_points={
         'console_scripts': [
-            'fact_aux2mongodb = aux2mongodb.__main__:main'
-            'fact_aux2mongodb_cron = aux2mongodb.cron:main'
+            'fact_aux2mongodb = aux2mongodb.__main__:main',
+            'fact_aux2mongodb_cron = aux2mongodb.cron:main',
         ]
     },
     zip_safe=False,
