@@ -13,7 +13,7 @@ Options:
     --overwrite        If given, already existing entries are overwritten, else ignored
 '''
 
-from .auxservices import (
+from fact.auxservices import (
     MagicWeather, DriveTracking, DrivePointing,
     DriveSource, PfMini, FSCHumidity, FSCTemperature,
     FTMTriggerRates, BiasVoltage
