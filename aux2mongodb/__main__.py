@@ -73,7 +73,7 @@ def main():
 
         for date in dates:
             try:
-                fill_service(service=service, data=date, database=database)
+                fill_service(service=service, date=date, database=database)
             except FileNotFoundError:
                 logging.info(
                     'No data available for {}, {}'.format(service_name, date)
