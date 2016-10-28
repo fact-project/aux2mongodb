@@ -13,16 +13,14 @@ Options:
     --overwrite        If given, already existing entries are overwritten, else ignored
 '''
 
-import pymongo
 import pandas as pd
 import yaml
 from docopt import docopt
 import logging
-from urllib.parse import quote_plus
 from datetime import datetime, timedelta
 
 from .utils import normalize_service_name
-from . import fill_service, supported_services
+from . import fill_service, supported_services, connect_to_database
 
 log = logging.getLogger('aux2mongodb')
 
@@ -35,13 +33,7 @@ def main():
     with open(args['--config']) as f:
         config = yaml.safe_load(f)
 
-    for key in ('user', 'password'):
-        config['mongodb'][key] = quote_plus(config['mongodb'][key])
-
-    client = pymongo.MongoClient(
-        'mongodb://{user}:{password}@{host}:{port}'.format(**config['mongodb'])
-    )
-    database = client.auxdata
+    database = connect_to_database(**config['mongodb'])
 
     dates = pd.date_range(
         args['--from'] or (datetime.now() - timedelta(days=1)),

@@ -1,5 +1,6 @@
 import logging
 import pymongo
+from urllib.parse import quote_plus
 
 from .utils import camel2snake, normalize_service_name
 from .database import bulk_insert
@@ -10,6 +11,7 @@ from fact.auxservices import (
     FTMTriggerRates, BiasVoltage, FADTemperature
 )
 
+log = logging.getLogger(__name__)
 
 supported_services = {
     normalize_service_name(cls.__name__): cls
@@ -19,9 +21,6 @@ supported_services = {
         BiasVoltage, FADTemperature,
     )
 }
-
-
-log = logging.getLogger(__name__)
 
 
 def fill_service(service, date, database):
@@ -43,3 +42,16 @@ def fill_service(service, date, database):
             date,
             collection.name
         ))
+
+
+def connect_to_database(host, port, user, password):
+
+    user = quote_plus(user)
+    password = quote_plus(password)
+
+    client = pymongo.MongoClient(
+        'mongodb://{user}:{password}@{host}:{port}'.format(
+            user=user, password=password, host=host, port=port
+        )
+    )
+    return client.auxdata
