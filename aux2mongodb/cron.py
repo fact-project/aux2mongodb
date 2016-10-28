@@ -42,7 +42,10 @@ def main():
 
     database = connect_to_database(**config['mongodb'])
 
-    services = [service(auxdir=args.auxdir) for service in supported_services]
+    services = [
+        service(auxdir=args.auxdir)
+        for service in supported_services.values()
+    ]
 
     schedule.every().day.at('15:00').do(
         fill_last_night, services=services, database=database
