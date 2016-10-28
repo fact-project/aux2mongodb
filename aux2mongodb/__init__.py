@@ -1,8 +1,25 @@
 import logging
 import pymongo
 
-from .utils import camel2snake
+from .utils import camel2snake, normalize_service_name
 from .database import bulk_insert
+
+from fact.auxservices import (
+    MagicWeather, DriveTracking, DrivePointing,
+    DriveSource, PfMini, FSCHumidity, FSCTemperature,
+    FTMTriggerRates, BiasVoltage, FADTemperature
+)
+
+
+supported_services = {
+    normalize_service_name(cls.__name__): cls
+    for cls in (
+        DriveTracking, DrivePointing, DriveSource, MagicWeather,
+        PfMini, FSCHumidity, FSCTemperature, FTMTriggerRates,
+        BiasVoltage, FADTemperature,
+    )
+}
+
 
 log = logging.getLogger(__name__)
 

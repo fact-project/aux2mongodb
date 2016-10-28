@@ -13,11 +13,6 @@ Options:
     --overwrite        If given, already existing entries are overwritten, else ignored
 '''
 
-from fact.auxservices import (
-    MagicWeather, DriveTracking, DrivePointing,
-    DriveSource, PfMini, FSCHumidity, FSCTemperature,
-    FTMTriggerRates, BiasVoltage, FADTemperature
-)
 import pymongo
 import pandas as pd
 import yaml
@@ -27,17 +22,7 @@ from urllib.parse import quote_plus
 from datetime import datetime, timedelta
 
 from .utils import normalize_service_name
-from . import fill_service
-
-
-supported_services = {
-    normalize_service_name(cls.__name__): cls
-    for cls in (
-        DriveTracking, DrivePointing, DriveSource, MagicWeather,
-        PfMini, FSCHumidity, FSCTemperature, FTMTriggerRates,
-        BiasVoltage, FADTemperature,
-    )
-}
+from . import fill_service, supported_services
 
 log = logging.getLogger('aux2mongodb')
 
