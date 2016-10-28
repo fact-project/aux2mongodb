@@ -45,6 +45,7 @@ def main():
     args = parser.parse_args()
 
     log = logging.getLogger()
+    log.level = logging.INFO
     stream = logging.StreamHandler()
     file_handler = logging.FileHandler(args.logfile)
     log.addHandler(stream)
@@ -66,6 +67,7 @@ def main():
         fill_last_night, services=services, database=database
     )
 
+    log.info('Schedule started')
     try:
         while True:
             schedule.run_pending()
