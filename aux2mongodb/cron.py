@@ -14,10 +14,10 @@ parser.add_argument('-d', '--auxdir', dest='auxdir', default='/fact/aux')
 log = logging.getLogger()
 
 
-def fill_last_night(database):
+def fill_last_night(services, database):
     date = (datetime.utcnow() - timedelta(days=1)).date()
 
-    for service in supported_services.values():
+    for service in services:
         name = service.__class__.__name__
 
         log.info('Start uploading service {} for night {}'.format(name, date))
@@ -42,7 +42,11 @@ def main():
 
     database = connect_to_database(**config['mongodb'])
 
-    schedule.every().day.at('15:00').do(fill_last_night, database=database)
+    services = [service(auxdir=args.auxdir) for service in supported_services]
+
+    schedule.every().day.at('15:00').do(
+        fill_last_night, services=services, database=database
+    )
 
     while True:
         schedule.run_pending()
