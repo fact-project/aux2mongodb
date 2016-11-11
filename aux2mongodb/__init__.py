@@ -6,9 +6,19 @@ from .utils import camel2snake, normalize_service_name
 from .database import bulk_insert
 
 from fact.auxservices import (
-    MagicWeather, DriveTracking, DrivePointing,
-    DriveSource, PfMini, FSCHumidity, FSCTemperature,
-    FTMTriggerRates, BiasVoltage, FADTemperature
+    MagicWeather,
+    DriveTracking,
+    DrivePointing,
+    DriveSource,
+    PfMini,
+    FSCHumidity,
+    FSCTemperature,
+    FTMTriggerRates,
+    BiasVoltage,
+    FADTemperature,
+    BiasCurrentUncalibrated,
+    BiasCurrentCalibrated,
+    TriggerThresholds,
 )
 
 log = logging.getLogger(__name__)
@@ -16,9 +26,19 @@ log = logging.getLogger(__name__)
 supported_services = {
     normalize_service_name(cls.__name__): cls
     for cls in (
-        DriveTracking, DrivePointing, DriveSource, MagicWeather,
-        PfMini, FSCHumidity, FSCTemperature, FTMTriggerRates,
-        BiasVoltage, FADTemperature,
+        DriveTracking,
+        DrivePointing,
+        DriveSource,
+        MagicWeather,
+        PfMini,
+        FSCHumidity,
+        FSCTemperature,
+        FTMTriggerRates,
+        BiasVoltage,
+        FADTemperature,
+        BiasCurrentUncalibrated,
+        BiasCurrentCalibrated,
+        TriggerThresholds,
     )
 }
 
